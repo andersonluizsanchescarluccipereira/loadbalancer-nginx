@@ -332,3 +332,4 @@ laboratorio-balanceamento-nginx-go-docker-mac/
 - NGINX stream module: https://nginx.org/en/docs/stream/ngx_stream_core_module.html
 - Docker Compose: https://docs.docker.com/compose/
 - Docker no macOS: https://docs.docker.com/desktop/setup/install/mac-install/
+# loadbalancer-nginx
