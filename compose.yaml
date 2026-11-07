@@ -1,0 +1,38 @@
+name: laboratorio-balanceamento-mac
+x-backend: &backend
+  image: lab-backend:mac-v1
+  build: ./service
+  environment:
+    ROLE: backend
+    MONITOR_URL: http://monitor:7070/internal/event
+  depends_on: [monitor]
+  restart: unless-stopped
+services:
+  monitor:
+    image: lab-backend:mac-v1
+    build: ./service
+    environment: {ROLE: monitor, PORT: "7070"}
+    restart: unless-stopped
+  server1:
+    <<: *backend
+    environment: {ROLE: backend, SERVER_ID: server1, HTTP_PORT: "8081", MONITOR_URL: "http://monitor:7070/internal/event"}
+    ports: ["127.0.0.1:8081:8081"]
+  server2:
+    <<: *backend
+    environment: {ROLE: backend, SERVER_ID: server2, HTTP_PORT: "8082", MONITOR_URL: "http://monitor:7070/internal/event"}
+    ports: ["127.0.0.1:8082:8082"]
+  server3:
+    <<: *backend
+    environment: {ROLE: backend, SERVER_ID: server3, HTTP_PORT: "8083", MONITOR_URL: "http://monitor:7070/internal/event"}
+    ports: ["127.0.0.1:8083:8083"]
+  nginx:
+    image: lab-nginx:mac-v1
+    build: ./nginx
+    depends_on: [server1, server2, server3, monitor]
+    ports:
+      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:9090:9090"
+      - "127.0.0.1:9091:9091/udp"
+      - "127.0.0.1:9092:9092"
+      - "127.0.0.1:9093:9093"
+    restart: unless-stopped
